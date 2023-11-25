@@ -4,13 +4,13 @@
 To get a Pandas dataframe or Numpy ndarray of the raw data (no preprocessing), you can do the following:
 
 ```python
-import read_data
+from diabetes_project.read_data import get_data_df, get_data_numpy
 
 # reads data as a pandas dataframe array
-data_df = read_data.get_data_df()
+data_df = get_data_df()
 
 # reads data as a numpy ndarray
-data_np = read_data.get_data_numpy()
+data_np = get_data_numpy()
 ```
 
 ### Preprocessing
@@ -18,7 +18,7 @@ Preprocessing is handled in the `preprocessing` module and has functions for han
 They are documented below:
 
 ```python
-import preprocessing
+from diabetes_project.preprocessing import *
 
 # parses data from either pandas dataframe or numpy ndarray into
 # feature and label ndarrays.
