@@ -23,9 +23,7 @@ def get_feature_labels(data):
         data_arr = data.to_numpy()
         return data_arr[:, :-1], data_arr[:, -1]
 
-    print(
-        f"Error: data parameter is of unsupported datatype: {type(data)}"
-    )
+    print(f"Error: data parameter is of unsupported datatype: {type(data)}")
     sys.exit(1)
 
 
@@ -42,9 +40,7 @@ def factorize(x):
     elif isinstance(x, pd.DataFrame):
         df = x
     else:
-        print(
-            f"Error: x parameter is of unsupported datatype: {type(x)}"
-        )
+        print(f"Error: x parameter is of unsupported datatype: {type(x)}")
         sys.exit(1)
 
     df = df.convert_dtypes()
@@ -73,6 +69,7 @@ def standardize_features(x, return_scaler=True):
         return scaler.transform(x), scaler
     else:
         return scaler.transform(x)
+
 
 if __name__ == "__main__":
     # This code is just some testing to ensure that the functions work correctly.
