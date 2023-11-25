@@ -20,7 +20,11 @@ def get_feature_labels(data):
         data_arr = data.to_numpy()
         return data_arr[:, :-1], data_arr[:, -1]
     else:
-        print("Error: data parameter is of unknown datatype: {0}".format(type(data)))
+        print(
+            "Error: data parameter is of unknown datatype: {0}".format(
+                type(data)
+            )
+        )
         exit()
 
 
@@ -29,6 +33,8 @@ if __name__ == "__main__":
     This code is just some testing to ensure that the functions work correctly.
     This won't run unless running preprocessing.py directly
     """
+
+    # imports from other parts of the project
     import read_data
 
     data_np = read_data.get_data_numpy()
@@ -36,7 +42,6 @@ if __name__ == "__main__":
     print(data_np)
     print(x)
     print(y)
-
 
     data_df = read_data.get_data_df()
     x, y = get_feature_labels(data_df)
