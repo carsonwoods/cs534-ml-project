@@ -72,7 +72,7 @@ def standardize_features(x, return_scaler=True):
 
 
 if __name__ == "__main__":
-    # This code is just some testing to ensure that the functions work correctly.
+    # This code is just testing to ensure that the functions work correctly.
     # This won't run unless running preprocessing.py directly
 
     # imports from other parts of the project
