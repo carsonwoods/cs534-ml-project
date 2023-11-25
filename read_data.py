@@ -7,7 +7,6 @@ from pathlib import Path
 
 # 3rd party imports
 import pandas as pd
-import numpy as np
 
 
 def get_data_df():
