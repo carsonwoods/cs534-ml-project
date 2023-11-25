@@ -1,5 +1,5 @@
 """
-Handles reading the data using a consistent interface. 
+Handles reading the data using a consistent interface.
 """
 
 from pathlib import Path
