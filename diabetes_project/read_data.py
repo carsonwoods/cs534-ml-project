@@ -13,7 +13,7 @@ def get_data_df():
     """
     Reads CSV into pandas dataframe from data directory
     """
-    data_path = Path("./data/diabetic_data.csv")
+    data_path = Path("../data/diabetic_data.csv")
     return pd.read_csv(data_path)
 
 

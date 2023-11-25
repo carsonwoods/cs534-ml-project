@@ -67,8 +67,8 @@ def standardize_features(x, return_scaler=True):
     scaler.fit(x)
     if return_scaler:
         return scaler.transform(x), scaler
-    else:
-        return scaler.transform(x)
+
+    return scaler.transform(x)
 
 
 if __name__ == "__main__":
@@ -76,9 +76,9 @@ if __name__ == "__main__":
     # This won't run unless running preprocessing.py directly
 
     # imports from other parts of the project
-    import read_data
+    from diabetes_project.read_data import get_data_df
 
-    data_df = read_data.get_data_df()
+    data_df = get_data_df()
     data_x, data_y = get_feature_labels(data_df)
     print(data_df)
     print(data_x)
