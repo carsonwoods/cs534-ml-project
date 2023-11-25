@@ -2,8 +2,10 @@
 Handles reading the data using a consistent interface.
 """
 
+# 1st party imports
 from pathlib import Path
 
+# 3rd party imports
 import pandas as pd
 import numpy as np
 
