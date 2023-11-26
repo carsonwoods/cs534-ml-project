@@ -51,6 +51,40 @@ def factorize(x):
     return df.to_numpy()
 
 
+def filter_pairwise_corr_vars(x, corrtype, threshold=0.60):
+    """
+    Removes one of any two features which has a
+    correlation score exceeding >= threshold
+    Params:
+        x -> numpy array of features only
+    Returns:
+        x_fs -> numpy array containing only the features
+                which survived the selection
+    """
+    if (
+        corrtype not in ('pearson', 'kendall', 'spearman')
+    ):
+        print("Error: must choose from pearson, kendall, or spearman corrtype")
+        sys.exit(1)
+
+    x_df = pd.DataFrame(x).convert_dtypes()
+
+    corr_matrix = x_df.corr(
+        method=corrtype,
+        min_periods=1,
+        numeric_only=False,
+    ).to_numpy()
+
+    remove_list = set()
+    for index, corr_score in np.ndenumerate(corr_matrix):
+        # don't check on diagonals or on previously removed features
+        if index[0] != index[1] and index[0] not in remove_list:
+            if abs(corr_score) >= threshold:
+                remove_list.add(index[1])
+
+    return np.delete(x, list(remove_list), 1)
+
+
 def standardize_features(x, return_scaler=True):
     """
     Uses sklearn to perform standard scaling on features.
@@ -88,4 +122,6 @@ if __name__ == "__main__":
     data_x = factorize(data_x)
 
     x_transform = standardize_features(data_x, return_scaler=False)
-    print(x_transform)
+    print(x_transform.shape)
+    x_transform = filter_pairwise_corr_vars(x_transform, "spearman", .3)
+    print(x_transform.shape)
