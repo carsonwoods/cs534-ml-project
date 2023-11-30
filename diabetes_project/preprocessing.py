@@ -45,7 +45,9 @@ def factorize(data):
     elif isinstance(data, pd.DataFrame):
         df = data
     else:
-        print(f"Error: data parameter is of unsupported datatype: {type(data)}")
+        print(
+            f"Error: data parameter is of unsupported datatype: {type(data)}"
+        )
         sys.exit(1)
 
     df = df.convert_dtypes()
@@ -176,7 +178,7 @@ def standardize_features(x, return_scaler=True):
     return scaler.transform(x)
 
 
-def remove_missing_features(features, threshold=.5, return_type="ndarray"):
+def remove_missing_features(features, threshold=0.5, return_type="ndarray"):
     """
     Removes any feature column where the number of
     missing values exceeds (>= threshold)
@@ -191,7 +193,9 @@ def remove_missing_features(features, threshold=.5, return_type="ndarray"):
     elif isinstance(features, pd.DataFrame):
         df = features
     else:
-        print(f"Error: features parameter is of unsupported datatype: {type(features)}")
+        print(
+            f"Error: features parameter is of unsupported datatype: {type(features)}"
+        )
         sys.exit(1)
 
     if not isinstance(threshold, float) or threshold >= 1 or threshold <= 0:
@@ -199,14 +203,14 @@ def remove_missing_features(features, threshold=.5, return_type="ndarray"):
         sys.exit(1)
 
     if return_type not in ["dataframe", "ndarray"]:
-        print("Error: return_type must be either \"dataframe\" or \"ndarray\"")
+        print('Error: return_type must be either "dataframe" or "ndarray"')
         sys.exit(1)
 
     remove_list = []
 
     for column in df:
         count_nan = df[column].isnull().sum()
-        if count_nan/df.shape[0] >= threshold:
+        if count_nan / df.shape[0] >= threshold:
             remove_list.append(column)
 
     df.drop(remove_list, axis=1, inplace=True)
@@ -231,7 +235,9 @@ def impute_missing_value(features):
     elif isinstance(features, pd.DataFrame):
         df = features
     else:
-        print(f"Error: features parameter is of unsupported datatype: {type(features)}")
+        print(
+            f"Error: features parameter is of unsupported datatype: {type(features)}"
+        )
         sys.exit(1)
 
     df = df.convert_dtypes()
