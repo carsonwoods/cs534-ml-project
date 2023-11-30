@@ -221,7 +221,58 @@ def remove_missing_features(features, threshold=0.5, return_type="ndarray"):
     return df.to_numpy()
 
 
-def impute_missing_value(features):
+def remove_repeat_patients(features, new_feature=False, return_type="ndarray"):
+    """
+    Removes samples from patients who have already been seen
+    Params:
+        features    -> pandas dataframe of features
+        new_feature -> specify whether to add new feature corresponding
+                       to how frequently a patient reappears in the dataset
+        return_type -> specify if you want the features returned as ndarray
+                       or as a dataframe
+    Returns:
+        x_fs      -> features with repeat patients removed (ndarray or dataframe)
+    """
+    if isinstance(features, np.ndarray):
+        df = pd.DataFrame(features)
+    elif isinstance(features, pd.DataFrame):
+        df = features
+    else:
+        print(
+            f"Error: features parameter is of unsupported datatype: {type(features)}"
+        )
+        sys.exit(1)
+
+    if return_type not in ["dataframe", "ndarray"]:
+        print('Error: return_type must be either "dataframe" or "ndarray"')
+        sys.exit(1)
+
+    seen_list = []
+    remove_list = []
+    count_list = []
+
+    for index, row in df.iterrows():
+        if row[1] not in seen_list:
+            seen_list.append(row[1])
+            count_list.append(1)
+        else:
+            remove_list.append(index)
+            count_list[seen_list.index(row[1])] += 1
+
+    df.drop(remove_list, axis=0, inplace=True)
+
+    # if specified, add number of time patient appears in dataset
+    if new_feature:
+        print(max(count_list))
+        df["repeat_patient_count"] = count_list
+
+    if return_type == "dataframe":
+        return df
+
+    return df.to_numpy()
+
+
+def impute_missing_value(features, return_type="ndarray"):
     """
     Imputes missing values with the mean/median for a column or
     "not recorded" for categorical/string values
@@ -240,12 +291,21 @@ def impute_missing_value(features):
         )
         sys.exit(1)
 
+    if return_type not in ["dataframe", "ndarray"]:
+        print('Error: return_type must be either "dataframe" or "ndarray"')
+        sys.exit(1)
+
     df = df.convert_dtypes()
     for col_idx in df:
         if (df[col_idx].dtype) != "string":
             df[col_idx].fillna((df[col_idx].median()), inplace=True)
         else:
             df[col_idx].fillna("not recorded", inplace=True)
+
+    if return_type == "dataframe":
+        return df
+
+    return df.to_numpy()
 
 
 if __name__ == "__main__":
@@ -261,7 +321,9 @@ if __name__ == "__main__":
     print(data_x)
     print(data_y)
 
+    print(f"Before: {data_x.shape}")
     remove_missing_features(data_x)
+    print(f"After: {data_x.shape}")
 
     # try factorizing
     data_x = factorize(data_x)
