@@ -8,8 +8,8 @@ import sys
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler
-from scipy.stats import spearmanr
 from sklearn.metrics import mutual_info_score
+from scipy.stats import spearmanr
 
 
 def get_feature_labels(data):
@@ -29,7 +29,7 @@ def get_feature_labels(data):
     sys.exit(1)
 
 
-def factorize(x):
+def factorize(data):
     """
     Handles preprocessing of non-numeric datatypes
     this will not impact numeric data.
@@ -39,12 +39,12 @@ def factorize(x):
         x_factorized -> ndarray in the original shape of x with
                         non-numeric features encoded via factorization
     """
-    if isinstance(x, np.ndarray):
-        df = pd.DataFrame(x)
-    elif isinstance(x, pd.DataFrame):
-        df = x
+    if isinstance(data, np.ndarray):
+        df = pd.DataFrame(data)
+    elif isinstance(data, pd.DataFrame):
+        df = data
     else:
-        print(f"Error: x parameter is of unsupported datatype: {type(x)}")
+        print(f"Error: data parameter is of unsupported datatype: {type(data)}")
         sys.exit(1)
 
     df = df.convert_dtypes()
@@ -55,16 +55,15 @@ def factorize(x):
     array = df.to_numpy()
     if array.shape[1] == 1:
         return array.flatten()
-    else:
-        return array
+    return array
 
 
-def filter_pairwise_corr_vars(x, corrtype, threshold=0.60):
+def filter_pairwise_corr_vars(features, corrtype, threshold=0.60):
     """
     Removes one of any two features which has a
     correlation score exceeding >= threshold
     Params:
-        x -> numpy array of features only
+        features -> numpy array of features only
     Returns:
         x_fs -> numpy array containing only the features
                 which survived the selection
@@ -73,7 +72,7 @@ def filter_pairwise_corr_vars(x, corrtype, threshold=0.60):
         print("Error: must choose from pearson, kendall, or spearman corrtype")
         sys.exit(1)
 
-    x_df = pd.DataFrame(x).convert_dtypes()
+    x_df = pd.DataFrame(features).convert_dtypes()
 
     corr_matrix = x_df.corr(
         method=corrtype,
@@ -105,7 +104,7 @@ def filter_most_corr(x, y, rank_type="correlation", threshold=0.80):
     """
     rankings = []
     if rank_type == "correlation":
-        corr_results = dict()
+        corr_results = {}
         # ensures that the type is an integer
         # so a classifier can be applied
         # y = y.astype(int)
@@ -121,7 +120,7 @@ def filter_most_corr(x, y, rank_type="correlation", threshold=0.80):
         for key in sorted(corr_results, reverse=True):
             rankings.extend(corr_results[key])
     elif rank_type == "mutual":
-        corr_results = dict()
+        corr_results = {}
 
         # ensures that the type is an integer
         # so a classifier can be applied
@@ -176,6 +175,47 @@ def standardize_features(x, return_scaler=True):
     return scaler.transform(x)
 
 
+def remove_missing_features(features, threshold=.5, return_type="ndarray"):
+    """
+    Removes any feature column where the number of
+    missing values exceeds (>= threshold)
+    Params:
+        features  -> pandas df or numpy array of features
+        threshold -> float value in range (0,1)
+    Returns:
+        x_fs      -> removes
+    """
+    if isinstance(features, np.ndarray):
+        df = pd.DataFrame(features)
+    elif isinstance(features, pd.DataFrame):
+        df = features
+    else:
+        print(f"Error: features parameter is of unsupported datatype: {type(features)}")
+        sys.exit(1)
+
+    if not isinstance(threshold, float) or threshold >= 1 or threshold <= 0:
+        print("Error: threshold must be a float between 0 and 1")
+        sys.exit(1)
+
+    if return_type not in ["dataframe", "ndarray"]:
+        print("Error: return_type must be either \"dataframe\" or \"ndarray\"")
+        sys.exit(1)
+
+    remove_list = []
+
+    for column in df:
+        count_nan = df[column].isnull().sum()
+        if count_nan/df.shape[0] >= threshold:
+            remove_list.append(column)
+
+    df.drop(remove_list, axis=1, inplace=True)
+
+    if return_type == "dataframe":
+        return df
+
+    return df.to_numpy()
+
+
 if __name__ == "__main__":
     # This code is just testing to ensure that the functions work correctly.
     # This won't run unless running preprocessing.py directly
@@ -188,6 +228,8 @@ if __name__ == "__main__":
     print(data_df)
     print(data_x)
     print(data_y)
+
+    remove_missing_features(data_x)
 
     # try factorizing
     data_x = factorize(data_x)
