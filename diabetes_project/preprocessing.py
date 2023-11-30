@@ -10,6 +10,7 @@ import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mutual_info_score
 from scipy.stats import spearmanr
+from scipy.stats import kstest
 
 
 def get_feature_labels(data):
@@ -214,6 +215,31 @@ def remove_missing_features(features, threshold=.5, return_type="ndarray"):
         return df
 
     return df.to_numpy()
+
+
+def impute_missing_value(features):
+    """
+    Imputes missing values with the mean/median for a column or
+    "not recorded" for categorical/string values
+    Params:
+        features  -> pandas df or numpy array of features
+    Returns:
+        new_features -> features with missing values replaced with imputed values
+    """
+    if isinstance(features, np.ndarray):
+        df = pd.DataFrame(features)
+    elif isinstance(features, pd.DataFrame):
+        df = features
+    else:
+        print(f"Error: features parameter is of unsupported datatype: {type(features)}")
+        sys.exit(1)
+
+    df = df.convert_dtypes()
+    for col_idx in df:
+        if (df[col_idx].dtype) != "string":
+            df[col_idx].fillna((df[col_idx].median()), inplace=True)
+        else:
+            df[col_idx].fillna("not recorded", inplace=True)
 
 
 if __name__ == "__main__":
