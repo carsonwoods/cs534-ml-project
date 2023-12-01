@@ -265,7 +265,7 @@ def remove_repeat_patients(features, new_feature=False, return_type="ndarray"):
 
     # if specified, add number of time patient appears in dataset
     if new_feature:
-        df.insert(len(df.columns) - 1, 'repeat_patient_count', count_list)
+        df.insert(len(df.columns) - 1, "repeat_patient_count", count_list)
 
     if return_type == "dataframe":
         return df
