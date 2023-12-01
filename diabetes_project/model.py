@@ -3,7 +3,7 @@ Generic Model Tuning
 """
 
 # 3rd party imports
-from sklearn.metrics import roc_auc_score, accuracy_score
+from sklearn.metrics import roc_auc_score, accuracy_score, make_scorer
 from sklearn.model_selection import (
     GridSearchCV,
     ShuffleSplit,
@@ -28,7 +28,9 @@ def build_generic_model(
     results = {}
 
     scoring_metrics = {}
-    scoring_metrics["AUC"] = "roc_auc"
+    scoring_metrics["AUC"] = make_scorer(
+        roc_auc_score, multi_class="ovr", needs_proba=True
+    )
     scoring_metrics["ACC"] = "accuracy"
 
     # instantiate GridSearchCV with MCCV
