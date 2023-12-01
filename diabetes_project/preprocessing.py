@@ -10,7 +10,6 @@ import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mutual_info_score
 from scipy.stats import spearmanr
-from scipy.stats import kstest
 
 
 def get_feature_labels(data):
@@ -90,7 +89,7 @@ def filter_pairwise_corr_vars(features, corrtype, threshold=0.60):
             if abs(corr_score) >= threshold:
                 remove_list.add(index[1])
 
-    return np.delete(x, list(remove_list), 1)
+    return np.delete(features, list(remove_list), 1)
 
 
 def filter_most_corr(x, y, rank_type="correlation", threshold=0.80):
@@ -194,7 +193,8 @@ def remove_missing_features(features, threshold=0.5, return_type="ndarray"):
         df = features
     else:
         print(
-            f"Error: features parameter is of unsupported datatype: {type(features)}"
+            f"""Error: features parameter is
+            of unsupported datatype: {type(features)}"""
         )
         sys.exit(1)
 
@@ -231,7 +231,8 @@ def remove_repeat_patients(features, new_feature=False, return_type="ndarray"):
         return_type -> specify if you want the features returned as ndarray
                        or as a dataframe
     Returns:
-        x_fs      -> features with repeat patients removed (ndarray or dataframe)
+        x_fs      -> features with repeat patients removed
+                     (ndarray or dataframe)
     """
     if isinstance(features, np.ndarray):
         df = pd.DataFrame(features)
@@ -239,7 +240,8 @@ def remove_repeat_patients(features, new_feature=False, return_type="ndarray"):
         df = features
     else:
         print(
-            f"Error: features parameter is of unsupported datatype: {type(features)}"
+            f"""Error: features parameter is of
+                unsupported datatype: {type(features)}"""
         )
         sys.exit(1)
 
@@ -279,7 +281,8 @@ def impute_missing_value(features, return_type="ndarray"):
     Params:
         features  -> pandas df or numpy array of features
     Returns:
-        new_features -> features with missing values replaced with imputed values
+        new_features -> features with missing
+                        values replaced with imputed values
     """
     if isinstance(features, np.ndarray):
         df = pd.DataFrame(features)
@@ -287,7 +290,8 @@ def impute_missing_value(features, return_type="ndarray"):
         df = features
     else:
         print(
-            f"Error: features parameter is of unsupported datatype: {type(features)}"
+            f"""Error: features parameter is of
+                unsupported datatype: {type(features)}"""
         )
         sys.exit(1)
 
@@ -329,7 +333,7 @@ if __name__ == "__main__":
     data_x = factorize(data_x)
     data_y = factorize(data_y)
 
-    x_transform = standardize_features(data_x, return_scaler=False)
-    print(x_transform.shape)
-    x_transform = filter_most_corr(x_transform, data_y, "mutual", 0.8)
-    print(x_transform.shape)
+    # x_transform = standardize_features(data_x, return_scaler=False)
+    print(data_x.shape)
+    x_transform = filter_most_corr(data_x, data_y, "correlation", 0.8)
+    print(data_x.shape)
