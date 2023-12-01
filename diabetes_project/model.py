@@ -49,6 +49,7 @@ def build_generic_model(
 
     # return best estimator for evaluating test score
     results["best-model"] = grid_search_model.best_estimator_
+    results["fit_time"] = grid_search_model.cv_results_['mean_fit_time'][grid_search_model.best_index_],
     results["train-auc"] = grid_search_model.cv_results_["mean_train_AUC"][
         grid_search_model.best_index_
     ]
@@ -58,12 +59,14 @@ def build_generic_model(
     results["val-auc"] = grid_search_model.cv_results_["mean_test_AUC"][
         grid_search_model.best_index_
     ]
-    results["val-acc"] = grid_search_model.cv_results_["mean_test_AUC"][
+    results["val-acc"] = grid_search_model.cv_results_["mean_test_ACC"][
         grid_search_model.best_index_
     ]
 
     results["test-auc"] = roc_auc_score(
-        test_y, results["best-model"].predict_proba(test_x)[:, 1]
+        test_y,
+        results["best-model"].predict_proba(test_x),
+        multi_class="ovr",
     )
     results["test-acc"] = accuracy_score(
         test_y, results["best-model"].predict(test_x)
