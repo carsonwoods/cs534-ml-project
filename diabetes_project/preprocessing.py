@@ -9,6 +9,7 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mutual_info_score
+from sklearn.model_selection import train_test_split
 from scipy.stats import spearmanr
 
 
@@ -343,6 +344,51 @@ def remove_constant_features(features, return_type="ndarray"):
         return df
 
     return df.to_numpy()
+
+def default_preprocessing(data_df):
+    """
+    Conducts default preprocessing for this data
+        Remove duplicate records for same patient
+        Remove features with constant value
+        Remove features with > 40% missing values
+        Split features and target
+        Impute missing features with mean (numerical) or "Not recorded" (categorical)
+        Factorize categorical features/target
+        Filter correlated features with corr > 0.75
+        Split train/test in 70/30 ratio, uses random seed for reproducible split across model training runs
+    Params:
+        data_df  -> pandas df, output from get_data_df
+    Returns:
+        train_x, test_x, train_y, test_y -> numpy arrays for model fitting
+    """
+    # removes repeat patients and generates new files
+    data_df = remove_repeat_patients(data_df, new_feature=True)
+
+    # removes any features with constant values
+    data_df = remove_constant_features(data_df)
+
+    # remove features with > 40% missing values
+    data_df = remove_missing_features(data_df, threshold = 0.4)
+
+    # splits data into train and test splits
+    data_x, data_y = get_feature_labels(data_df)
+
+    # imputs missing values
+    data_x = impute_missing_value(data_x)
+
+    # factorizes features
+    data_x = factorize(data_x)
+    data_y = factorize(data_y)
+
+    # filter highly correlated features
+    data_x = filter_most_corr(data_x, data_y, "correlation", 0.75)
+
+    # gets test and training data
+    train_x, test_x, train_y, test_y = train_test_split(
+        data_x, data_y, test_size=0.30, random_state=42
+    )
+
+    return (train_x, test_x, train_y, test_y)
 
 
 if __name__ == "__main__":
