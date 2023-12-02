@@ -254,19 +254,18 @@ def remove_repeat_patients(features, new_feature=False, return_type="ndarray"):
     count_list = []
 
     for index, row in df.iterrows():
-        if row[1] not in seen_list:
-            seen_list.append(row[1])
+        if row.iloc[1] not in seen_list:
+            seen_list.append(row.iloc[1])
             count_list.append(1)
         else:
             remove_list.append(index)
-            count_list[seen_list.index(row[1])] += 1
+            count_list[seen_list.index(row.iloc[1])] += 1
 
     df.drop(remove_list, axis=0, inplace=True)
 
     # if specified, add number of time patient appears in dataset
     if new_feature:
-        print(max(count_list))
-        df["repeat_patient_count"] = count_list
+        df.insert(len(df.columns) - 1, "repeat_patient_count", count_list)
 
     if return_type == "dataframe":
         return df
