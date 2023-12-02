@@ -310,6 +310,40 @@ def impute_missing_value(features, return_type="ndarray"):
 
     return df.to_numpy()
 
+def remove_constant_features(features, return_type="ndarray"):
+    """
+    Removes any features with only one possible value (constant value across observations)
+    Params:
+        features  -> pandas df or numpy array of features
+        return_type -> format to return transformed feature set
+    Returns:
+        new_features -> features with constant variables dropped
+    """
+
+    if isinstance(features, np.ndarray):
+        df = pd.DataFrame(features)
+    elif isinstance(features, pd.DataFrame):
+        df = features
+    else:
+        print(
+            f"""Error: features parameter is of
+                unsupported datatype: {type(features)}"""
+        )
+        sys.exit(1)
+
+    if return_type not in ["dataframe", "ndarray"]:
+        print('Error: return_type must be either "dataframe" or "ndarray"')
+        sys.exit(1)
+
+    for col_idx in df:
+        if len(df[col_idx].unique()) == 1:
+            df.drop(columns = [col_idx], inplace = True)
+
+    if return_type == "dataframe":
+        return df
+
+    return df.to_numpy()
+
 
 if __name__ == "__main__":
     # This code is just testing to ensure that the functions work correctly.
