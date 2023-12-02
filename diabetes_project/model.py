@@ -49,7 +49,9 @@ def build_generic_model(
 
     # return best estimator for evaluating test score
     results["best-model"] = grid_search_model.best_estimator_
-    results["fit_time"] = grid_search_model.cv_results_['mean_fit_time'][grid_search_model.best_index_],
+    results["fit_time"] = grid_search_model.cv_results_["mean_fit_time"][
+        grid_search_model.best_index_
+    ]
     results["train-auc"] = grid_search_model.cv_results_["mean_train_AUC"][
         grid_search_model.best_index_
     ]
