@@ -311,9 +311,11 @@ def impute_missing_value(features, return_type="ndarray"):
 
     return df.to_numpy()
 
+
 def remove_constant_features(features, return_type="ndarray"):
     """
-    Removes any features with only one possible value (constant value across observations)
+    Removes any features with only one possible value
+    (constant value across observations)
     Params:
         features  -> pandas df or numpy array of features
         return_type -> format to return transformed feature set
@@ -338,24 +340,27 @@ def remove_constant_features(features, return_type="ndarray"):
 
     for col_idx in df:
         if len(df[col_idx].unique()) == 1:
-            df.drop(columns = [col_idx], inplace = True)
+            df.drop(columns=[col_idx], inplace=True)
 
     if return_type == "dataframe":
         return df
 
     return df.to_numpy()
 
+
 def default_preprocessing(data_df):
     """
     Conducts default preprocessing for this data
-        Remove duplicate records for same patient
-        Remove features with constant value
-        Remove features with > 40% missing values
-        Split features and target
-        Impute missing features with mean (numerical) or "Not recorded" (categorical)
-        Factorize categorical features/target
-        Filter correlated features with corr > 0.75
-        Split train/test in 70/30 ratio, uses random seed for reproducible split across model training runs
+        - Remove duplicate records for same patient
+        - Remove features with constant value
+        - Remove features with > 40% missing values
+        - Split features and target
+        - Impute missing features with mean (numerical)
+          or "Not recorded" (categorical)
+        - Factorize categorical features/target
+        - Filter correlated features with corr > 0.75
+        - Split train/test in 70/30 ratio, uses random
+          seed for reproducible split across model training runs
     Params:
         data_df  -> pandas df, output from get_data_df
     Returns:
@@ -368,7 +373,7 @@ def default_preprocessing(data_df):
     data_df = remove_constant_features(data_df)
 
     # remove features with > 40% missing values
-    data_df = remove_missing_features(data_df, threshold = 0.4)
+    data_df = remove_missing_features(data_df, threshold=0.4)
 
     # splits data into train and test splits
     data_x, data_y = get_feature_labels(data_df)
