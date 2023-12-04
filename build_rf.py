@@ -36,22 +36,3 @@ results = build_generic_model(
 )
 
 print(results)
-
-
-# trains RandomForest classifier
-results = {}
-results["params"] = {}
-results["params"]["n_estimators"] = [50, 100, 150, 250]
-results["params"]["max_depth"] = [2, 5, 10, 25, 50]
-results["params"]["min_samples_leaf"] = [1, 5, 10, 25, 50]
-rf_model = RandomForestClassifier()
-results = build_generic_model(
-    rf_model,
-    results["params"],
-    train_x,
-    train_y,
-    test_x,
-    test_y,
-)
-
-print(results)
