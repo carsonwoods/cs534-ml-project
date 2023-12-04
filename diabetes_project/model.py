@@ -98,7 +98,7 @@ def build_generic_model(
     )
     results["test-f1"] = f1_score(
         test_y,
-        results["best-model"].predict_proba(test_x),
+        results["best-model"].predict(test_x),
         average=f_score_mode,
     )
     results["test-f2"] = fbeta_score(
