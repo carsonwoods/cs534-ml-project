@@ -3,7 +3,13 @@ Generic Model Tuning
 """
 
 # 3rd party imports
-from sklearn.metrics import roc_auc_score, accuracy_score, make_scorer
+from sklearn.metrics import (
+    roc_auc_score,
+    accuracy_score,
+    f1_score,
+    fbeta_score,
+    make_scorer,
+)
 from sklearn.model_selection import (
     GridSearchCV,
     ShuffleSplit,
@@ -26,12 +32,17 @@ def build_generic_model(
     Performs Monte-Carlo Cross Validation on a generic module.
     """
     results = {}
+    f_score_mode = "weighted"
 
     scoring_metrics = {}
     scoring_metrics["AUC"] = make_scorer(
         roc_auc_score, multi_class="ovr", needs_proba=True
     )
     scoring_metrics["ACC"] = "accuracy"
+    scoring_metrics["F1"] = make_scorer(f1_score, average=f_score_mode)
+    scoring_metrics["F2"] = make_scorer(
+        fbeta_score, beta=2, average=f_score_mode
+    )
 
     # instantiate GridSearchCV with MCCV
     grid_search_model = GridSearchCV(
@@ -58,10 +69,22 @@ def build_generic_model(
     results["train-acc"] = grid_search_model.cv_results_["mean_train_ACC"][
         grid_search_model.best_index_
     ]
+    results["train-f1"] = grid_search_model.cv_results_["mean_train_F1"][
+        grid_search_model.best_index_
+    ]
+    results["train-f2"] = grid_search_model.cv_results_["mean_train_F2"][
+        grid_search_model.best_index_
+    ]
     results["val-auc"] = grid_search_model.cv_results_["mean_test_AUC"][
         grid_search_model.best_index_
     ]
     results["val-acc"] = grid_search_model.cv_results_["mean_test_ACC"][
+        grid_search_model.best_index_
+    ]
+    results["val-f1"] = grid_search_model.cv_results_["mean_test_F1"][
+        grid_search_model.best_index_
+    ]
+    results["val-f2"] = grid_search_model.cv_results_["mean_test_F2"][
         grid_search_model.best_index_
     ]
 
@@ -72,6 +95,17 @@ def build_generic_model(
     )
     results["test-acc"] = accuracy_score(
         test_y, results["best-model"].predict(test_x)
+    )
+    results["test-f1"] = f1_score(
+        test_y,
+        results["best-model"].predict_proba(test_x),
+        average=f_score_mode,
+    )
+    results["test-f2"] = fbeta_score(
+        test_y,
+        results["best-model"].predict(test_x),
+        beta=2,
+        average=f_score_mode,
     )
 
     return results
