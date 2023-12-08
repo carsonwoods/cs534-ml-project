@@ -25,16 +25,16 @@ results["params"]["hidden_layer_sizes"] = [
     (25),
     (100),
     (300),
-    (25, 25),
-    (100, 100),
-    (300, 300),
+    (25, 25, 25),
+    (100, 100, 100),
+    (300, 300, 300),
     (25, 25, 25, 25, 25),
     (100, 100, 100, 100, 100),
     (300, 300, 300, 300, 300),
 ]
 results["params"]["activation"] = ["logistic", "tanh", "relu"]
 results["params"]["alpha"] = [0, 0.01, 0.1, 1, 5]
-results["params"]["learning_rate"] = [0, 0.001, 0.01, 0.1, 1, 5]
+# results["params"]["learning_rate"] = [0, 0.001, 0.01, 0.1, 1, 5]
 
 
 # instantiates model to tune
