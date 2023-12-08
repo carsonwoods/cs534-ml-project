@@ -27,10 +27,10 @@ results = {}
 results["params"] = {}
 results["params"]["C"] = [0.1, 0.25, 0.5, 1, 2, 5]
 results["params"]["degree"] = [1, 2, 3, 4, 5, 7, 8, 9, 10]
-results["params"]["kernel"] = ["linear", "poly"]
+results["params"]["kernel"] = ["linear", "poly", "rbf"]
 
 # instantiates model to tune
-svm_model = SVC(probability=True)
+svm_model = SVC(max_iter=20000, probability=True)
 results = build_generic_model(
     svm_model,
     results["params"],
