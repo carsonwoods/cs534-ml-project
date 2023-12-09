@@ -11,6 +11,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mutual_info_score
 from sklearn.model_selection import train_test_split
 from scipy.stats import spearmanr
+from sklearn.decomposition import PCA, NMF
 
 
 def get_feature_labels(data):
@@ -347,6 +348,36 @@ def remove_constant_features(features, return_type="ndarray"):
 
     return df.to_numpy()
 
+def run_pca(train_x, test_x):
+    
+    # Z-score normalize input data
+    scaler = StandardScaler()
+    scaler.fit(train_x)
+    train_x = scaler.transform(train_x)
+    test_x = scaler.transform(test_x)
+    
+    pca = PCA()
+    pca.fit(train_x)
+    
+    # Select number of components that explain at least 95% of the variance
+    sum = 0
+    n_components = 0
+    for i in range(0,len(pca.explained_variance_ratio_)):
+        sum += pca.explained_variance_ratio_[i]
+        if sum > 0.95:
+            n_components = i + 1
+            break
+    
+    # Transform training set and select features up to n_components
+    train_transformed = pca.transform(train_x)
+    train_transformed = train_transformed[:,0:n_components]
+    
+    # Transform test set and select features up to n_components
+    test_transformed = pca.transform(test_x)
+    test_transformed = test_transformed[:,0:n_components]
+    
+    return (train_transformed, test_transformed)
+
 
 def default_preprocessing(data_df):
     """
@@ -393,6 +424,44 @@ def default_preprocessing(data_df):
         data_x, data_y, test_size=0.30, random_state=42
     )
 
+    return (train_x, test_x, train_y, test_y)
+
+def default_preprocessing_pca(data_df):
+    """
+    Conducts default preprocessing for this data above plus PCA dimensionality reduction
+    Params:
+        data_df  -> pandas df, output from get_data_df
+    Returns:
+        train_x, test_x, train_y, test_y -> numpy arrays for model fitting
+    """
+    # removes repeat patients and generates new files
+    data_df = remove_repeat_patients(data_df, new_feature=True)
+
+    # removes any features with constant values
+    data_df = remove_constant_features(data_df)
+
+    # remove features with > 40% missing values
+    data_df = remove_missing_features(data_df, threshold=0.4)
+
+    # splits data into train and test splits
+    data_x, data_y = get_feature_labels(data_df)
+
+    # imputs missing values
+    data_x = impute_missing_value(data_x)
+
+    # factorizes features
+    data_x = factorize(data_x)
+    data_y = factorize(data_y)
+
+    # filter highly correlated features
+    data_x = filter_most_corr(data_x, data_y, "correlation", 0.75)
+
+    # gets test and training data
+    train_x, test_x, train_y, test_y = train_test_split(
+        data_x, data_y, test_size=0.30, random_state=42
+    )
+
+    train_x, test_x = run_pca(train_x, test_x)
     return (train_x, test_x, train_y, test_y)
 
 
