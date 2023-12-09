@@ -10,6 +10,7 @@ from diabetes_project.read_data import get_data_df
 from diabetes_project.preprocessing import (
     remove_repeat_patients,
     default_preprocessing,
+    default_preprocessing_pca
 )
 from diabetes_project.model import build_generic_model
 
@@ -41,3 +42,31 @@ results = build_generic_model(
 )
 
 print(results)
+
+'''
+# Run again with PCA transformed data - load df from scratch to avoid any accidental inplace modifications from calls above
+data_df = get_data_df()
+
+# Run full set of preprocessing steps + PCA
+train_x, test_x, train_y, test_y = default_preprocessing_pca(data_df)
+
+# trains K-NN classifier
+results = {}
+results["params"] = {}
+results["params"]["C"] = [0.1, 0.25, 0.5, 1, 2, 5]
+results["params"]["degree"] = [1, 2, 3, 4, 5, 7, 8, 9, 10]
+results["params"]["kernel"] = ["linear", "poly", "rbf"]
+
+# instantiates model to tune
+svm_model = SVC(max_iter=20000, probability=True)
+results = build_generic_model(
+    svm_model,
+    results["params"],
+    train_x,
+    train_y,
+    test_x,
+    test_y,
+)
+
+print(results)
+'''
