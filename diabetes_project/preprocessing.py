@@ -159,24 +159,34 @@ def filter_most_corr(x, y, rank_type="correlation", threshold=0.80):
     return np.delete(x, list(delete_list), 1)
 
 
-def standardize_features(x, return_scaler=True):
+def standardize_features(data):
     """
     Uses sklearn to perform standard scaling on features.
     With scaler being returned as well to apply transformation to
     a different dataset (fit model on train, apply to test, etc.)
     Params:
-        x             -> the features of the data to be scaled
-        return_scaler -> determines if the scaler object should be returned
+        data          -> the features of the data to be scaled
     Returns:
         x_transformed -> the standardizes input data
-        scaler        -> the scaling model
     """
-    scaler = StandardScaler()
-    scaler.fit(x)
-    if return_scaler:
-        return scaler.transform(x), scaler
+    if isinstance(data, np.ndarray):
+        df = pd.DataFrame(data)
+    elif isinstance(data, pd.DataFrame):
+        df = data
+    else:
+        print(
+            f"Error: data parameter is of unsupported datatype: {type(data)}"
+        )
+        sys.exit(1)
 
-    return scaler.transform(x)
+    df = df.convert_dtypes()
+    for col_idx in df:
+        if (df[col_idx].dtype) != "string":
+            scaler = StandardScaler()
+            scaler.fit(df[col_idx].to_numpy().reshape(-1,1))
+            df[col_idx] = scaler.transform(df[col_idx].to_numpy().reshape(-1,1))
+
+    return df.to_numpy()
 
 
 def remove_missing_features(features, threshold=0.5, return_type="ndarray"):
@@ -349,16 +359,16 @@ def remove_constant_features(features, return_type="ndarray"):
     return df.to_numpy()
 
 def run_pca(train_x, test_x):
-    
+
     # Z-score normalize input data
     scaler = StandardScaler()
     scaler.fit(train_x)
     train_x = scaler.transform(train_x)
     test_x = scaler.transform(test_x)
-    
+
     pca = PCA()
     pca.fit(train_x)
-    
+
     # Select number of components that explain at least 95% of the variance
     sum = 0
     n_components = 0
@@ -367,15 +377,15 @@ def run_pca(train_x, test_x):
         if sum > 0.95:
             n_components = i + 1
             break
-    
+
     # Transform training set and select features up to n_components
     train_transformed = pca.transform(train_x)
     train_transformed = train_transformed[:,0:n_components]
-    
+
     # Transform test set and select features up to n_components
     test_transformed = pca.transform(test_x)
     test_transformed = test_transformed[:,0:n_components]
-    
+
     return (train_transformed, test_transformed)
 
 
@@ -470,13 +480,15 @@ if __name__ == "__main__":
     # This won't run unless running preprocessing.py directly
 
     # imports from other parts of the project
-    from diabetes_project.read_data import get_data_df
+    from read_data import get_data_df
 
     data_df = get_data_df()
     data_x, data_y = get_feature_labels(data_df)
-    print(data_df)
+
     print(data_x)
-    print(data_y)
+    data_x = standardize_features(data_x)
+    print(data_x)
+    exit(0)
 
     print(f"Before: {data_x.shape}")
     remove_missing_features(data_x)
