@@ -12,13 +12,13 @@ from diabetes_project.model import build_generic_model
 
 # Function to build an ensemble model of Random Forest and XGBoost
 def build_ensemble_model(
-    rf_model, 
-    xgb_model, 
-    rf_params, 
-    xgb_params, 
-    train_x, 
-    train_y, 
-    test_x, 
+    rf_model,
+    xgb_model,
+    rf_params,
+    xgb_params,
+    train_x,
+    train_y,
+    test_x,
     test_y
 ):
     """
