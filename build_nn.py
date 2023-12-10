@@ -10,7 +10,7 @@ from diabetes_project.read_data import get_data_df
 from diabetes_project.preprocessing import (
     default_preprocessing,
     default_preprocessing_pca,
-    default_preprocessing_zscore
+    default_preprocessing_zscore,
 )
 from diabetes_project.model import build_generic_model
 
@@ -52,7 +52,7 @@ results = build_generic_model(
 
 print(results)
 
-'''
+"""
 # Run again with zscoring - load df from scratch to avoid any accidental inplace modifications from calls above
 data_df = get_data_df()
 
@@ -126,4 +126,4 @@ results = build_generic_model(
     test_y,
 )
 print(results)
-'''
+"""
