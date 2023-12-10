@@ -11,7 +11,19 @@ from diabetes_project.preprocessing import default_preprocessing
 from diabetes_project.model import build_generic_model
 
 # Function to build an ensemble model of Random Forest and XGBoost
-def build_ensemble_model(rf_model, xgb_model, rf_params, xgb_params, train_x, train_y, test_x, test_y):
+def build_ensemble_model(
+    rf_model, 
+    xgb_model, 
+    rf_params, 
+    xgb_params, 
+    train_x, 
+    train_y, 
+    test_x, 
+    test_y
+):
+    """
+    Combining best performing models 
+    """
     # Build Random Forest model
     rf_results = build_generic_model(rf_model, rf_params, train_x, train_y, test_x, test_y)
 
@@ -19,7 +31,7 @@ def build_ensemble_model(rf_model, xgb_model, rf_params, xgb_params, train_x, tr
     xgb_results = build_generic_model(xgb_model, xgb_params, train_x, train_y, test_x, test_y)
 
     # Combine predictions using averaging (you can also experiment with other ensemble methods)
-    ensemble_predictions = (rf_results['best-model'].predict_proba(test_x) + 
+    ensemble_predictions = (rf_results['best-model'].predict_proba(test_x) +
                             xgb_results['best-model'].predict_proba(test_x)) / 2
 
     # Evaluate accuracy of the ensemble model
