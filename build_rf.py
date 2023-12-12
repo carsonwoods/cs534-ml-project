@@ -14,7 +14,7 @@ from diabetes_project.preprocessing import (
 )
 from diabetes_project.model import build_generic_model
 
-
+"""
 # reads data into dataframe
 data_df = get_data_df()
 
@@ -38,7 +38,7 @@ results = build_generic_model(
 )
 print(results)
 
-"""
+
 # Run again with zscoring - load df from scratch to avoid any accidental inplace modifications from calls above
 data_df = get_data_df()
 
@@ -61,6 +61,7 @@ results = build_generic_model(
 )
 print(results)
 
+"""
 # Run again with PCA transformed data - load df from scratch to avoid any accidental inplace modifications from calls above
 data_df = get_data_df()
 
@@ -82,4 +83,3 @@ results = build_generic_model(
     test_y,
 )
 print(results)
-"""
