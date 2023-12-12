@@ -4,6 +4,7 @@ Builds Ensemble model, combining Random Forest and XGBoost
 # 3rd party imports
 from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
+from sklearn.metrics import roc_auc_score, accuracy_score, f1_score, fbeta_score
 
 # imports from other parts of the project
 from diabetes_project.read_data import get_data_df
@@ -51,11 +52,27 @@ def build_ensemble_model(
         + xgb_results["best-model"].score(test_x, test_y)
     ) / 2
 
+    # Calculate ensemble AUC
+    ensemble_auc = roc_auc_score(test_y, ensemble_predictions, multi_class="ovr")
+
+    # Calculate ensemble F1 and F2
+    ensemble_f1 = f1_score(test_y, ensemble_predictions.argmax(axis=1), average='weighted')
+    ensemble_f2 = fbeta_score(test_y, ensemble_predictions.argmax(axis=1), beta=2, average='weighted')
+
     ensemble_results = {
-        "rf_results": rf_results,
-        "xgb_results": xgb_results,
-        "ensemble_predictions": ensemble_predictions,
-        "ensemble_accuracy": ensemble_accuracy,
+        'train_auc': rf_results['train-auc'],
+        'train_accuracy': rf_results['train-acc'],
+        'val_auc': rf_results['val-auc'],
+        'val_accuracy': rf_results['val-acc'],
+        'test_auc': ensemble_auc,
+        'test_accuracy': ensemble_accuracy,
+        'test_f1': ensemble_f1,
+        'test_f2': ensemble_f2,
+        'train_time_seconds': rf_results['fit_time'],
+        'rf_results': rf_results,
+        'xgb_results': xgb_results,
+        'ensemble_predictions': ensemble_predictions,
+        'ensemble_accuracy': ensemble_accuracy
     }
 
     return ensemble_results
