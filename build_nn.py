@@ -2,6 +2,7 @@
 Builds Neural Network model using GridSearchCV
 """
 
+
 # 3rd party imports
 from sklearn.neural_network import MLPClassifier
 
@@ -14,6 +15,8 @@ from diabetes_project.preprocessing import (
 )
 from diabetes_project.model import build_generic_model
 
+
+"""
 # reads data into dataframe
 data_df = get_data_df()
 
@@ -52,7 +55,7 @@ results = build_generic_model(
 
 print(results)
 
-"""
+
 # Run again with zscoring - load df from scratch to avoid any accidental inplace modifications from calls above
 data_df = get_data_df()
 
@@ -89,9 +92,11 @@ results = build_generic_model(
     test_y,
 )
 print(results)
+"""
 
 # Run again with PCA transformed data - load df from scratch to avoid any accidental inplace modifications from calls above
 data_df = get_data_df()
+
 
 # Run full set of preprocessing steps + PCA
 train_x, test_x, train_y, test_y = default_preprocessing_pca(data_df)
@@ -126,4 +131,3 @@ results = build_generic_model(
     test_y,
 )
 print(results)
-"""
