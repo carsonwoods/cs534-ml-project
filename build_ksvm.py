@@ -14,7 +14,6 @@ from diabetes_project.preprocessing import (
 )
 from diabetes_project.model import build_generic_model
 
-"""
 # reads data into dataframe
 data_df = get_data_df()
 
@@ -26,7 +25,7 @@ results = {}
 results["params"] = {}
 results["params"]["C"] = [0.1, 0.25, 0.5, 1, 2, 5]
 results["params"]["degree"] = [1, 2, 3, 4, 5, 7, 8, 9, 10]
-results["params"]["kernel"] = ["linear", "poly", "rbf"]
+results["params"]["kernel"] = ["linear", "poly"]
 
 # instantiates model to tune
 svm_model = SVC(max_iter=10000, probability=True)
@@ -40,7 +39,6 @@ results = build_generic_model(
 )
 
 print(results)
-"""
 
 # reads data into dataframe
 data_df = get_data_df()
@@ -53,7 +51,7 @@ results = {}
 results["params"] = {}
 results["params"]["C"] = [0.1, 0.25, 0.5, 1, 2, 5]
 results["params"]["degree"] = [1, 2, 3, 4, 5, 7, 8, 9, 10]
-results["params"]["kernel"] = ["linear", "poly", "rbf"]
+results["params"]["kernel"] = ["linear", "poly"]
 
 # instantiates model to tune
 svm_model = SVC(max_iter=10000, probability=True)
@@ -66,7 +64,8 @@ results = build_generic_model(
     test_y,
 )
 
-"""
+print(results)
+
 # reads data into dataframe
 data_df = get_data_df()
 
@@ -78,7 +77,7 @@ results = {}
 results["params"] = {}
 results["params"]["C"] = [0.1, 0.25, 0.5, 1, 2, 5]
 results["params"]["degree"] = [1, 2, 3, 4, 5, 7, 8, 9, 10]
-results["params"]["kernel"] = ["linear", "poly", "rbf"]
+results["params"]["kernel"] = ["linear", "poly"]
 
 # instantiates model to tune
 svm_model = SVC(max_iter=10000, probability=True)
@@ -90,4 +89,5 @@ results = build_generic_model(
     test_x,
     test_y,
 )
-"""
+
+print(results)
